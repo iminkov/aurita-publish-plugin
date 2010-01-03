@@ -1,0 +1,11 @@
+
+plugin_name : Website
+
+page : Seite
+new_page : Neue Seite
+edit_page : Seite bearbeiten
+delete_page : Seite l&ouml;schen
+find_article : Artikel w&auml;hlen
+add_article : Artikel hinzuf&uuml;gen
+
+add_layout_partial : Neue Vorlage
