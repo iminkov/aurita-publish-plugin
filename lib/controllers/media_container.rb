@@ -1,6 +1,7 @@
 
 require('aurita')
 Aurita.import_plugin_controller :wiki, :media_container
+Aurita.import_plugin_module :publish, 'gui/media_container_partial'
 
 module Aurita
 module Plugins
