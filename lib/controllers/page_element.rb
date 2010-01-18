@@ -15,9 +15,10 @@ module Publish
       form[:action].value = :perform_add_article
 
       form.add(GUI::Hidden_Field.new(:name => :page_id, :value => param(:page_id)))
-      form.add(Wiki::GUI::Article_Selection_Field.new(:name  => :article, 
-                                                      :label => tl(:find_article), 
-                                                      :id    => :article_id_selection))
+      form.add(Wiki::GUI::Article_Selection_Field.new(:name        => :article, 
+                                                      :label       => tl(:find_article), 
+                                                      :num_results => 100, 
+                                                      :id          => :article_id_selection))
       form.fields = [ :article, :page_id ]
 
       form = decorate_form(form)
@@ -31,6 +32,13 @@ module Publish
     def perform_add_article
       param[:position] = 0
       perform_add()
+      page = Publish::Page.get(param(:page_id))
+      redirect_to(page) if page
+    end
+
+    def perform_delete
+      Publish::Page_Element.find(1).with(:content_id => param(:content_id), 
+                                         :page_id    => param(:page_id)).entity.delete
       page = Publish::Page.get(param(:page_id))
       redirect_to(page) if page
     end

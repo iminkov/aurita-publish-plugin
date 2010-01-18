@@ -9,3 +9,5 @@ find_article : Artikel w&auml;hlen
 add_article : Artikel hinzuf&uuml;gen
 
 add_layout_partial : Neue Vorlage
+background : Hintergrund
+backgrounds : Hintergrundbilder
