@@ -24,7 +24,7 @@ module Publish
 
     def set_position
       mc = load_instance()
-      mc.vertical = param(:vertical)
+      mc.position = param(:position)
       mc.commit
     end
 

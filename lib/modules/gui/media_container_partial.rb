@@ -16,31 +16,45 @@ module GUI
       mcid    = media_container.media_container_id
       element = false
 
-      action  = "Publish::Media_Container/set_position/media_container_id=#{mcid}&vertical"
-      icon_v  = '/aurita/images/icons/media_container_v.gif'
+      action  = "Publish::Media_Container/set_position/media_container_id=#{mcid}&position"
+      icon_l  = '/aurita/images/icons/media_container_l.gif'
+      icon_r  = '/aurita/images/icons/media_container_r.gif'
       icon_h  = '/aurita/images/icons/media_container_h.gif'
-      but_v   = "media_container_pos_button_#{mcid}_v"
+      but_l   = "media_container_pos_button_#{mcid}_l"
+      but_r   = "media_container_pos_button_#{mcid}_r"
       but_h   = "media_container_pos_button_#{mcid}_h"
 
-      style_h = nil
-      style_v = nil
-      if media_container.vertical then
-        style_v = 'display: none;'
-      else
-        style_h = 'display: none;'
+      case media_container.position
+      when 'h':
+        hl_h = :highlighted
+      when 'l':
+        hl_l = :highlighted
+      when 'r':
+        hl_r = :highlighted
       end
 
-      btn_h = HTML.div.context_menu_button(:id => but_h, :style => style_h, 
-          :onclick => "Aurita.load({ element: 'dispatcher', action: '#{action}=f' }); 
-                       $('#{but_h}').hide(); $('#{but_v}').show();") { 
+      btn_h = HTML.div(:id => but_h, :class => [ :context_menu_button, hl_h ], 
+                       :onclick => "Aurita.load({ element: 'dispatcher', action: '#{action}=h' }); 
+                                    $('#{but_r}').removeClassName('highlighted'); 
+                                    $('#{but_l}').removeClassName('highlighted'); 
+                                    $('#{but_h}').addClassName('highlighted');") { 
         HTML.img(:src => icon_h)
       } 
-      btn_v = HTML.div.context_menu_button(:id => but_v, :style => style_v, 
-          :onclick => "Aurita.load({ element: 'dispatcher', action: '#{action}=t' }); 
-                       $('#{but_v}').hide(); $('#{but_h}').show();") { 
-        HTML.img(:src => icon_v)
+      btn_l = HTML.div(:id => but_l, :class => [ :context_menu_button, hl_l ], 
+                       :onclick => "Aurita.load({ element: 'dispatcher', action: '#{action}=l' }); 
+                                    $('#{but_h}').removeClassName('highlighted'); 
+                                    $('#{but_r}').removeClassName('highlighted'); 
+                                    $('#{but_l}').addClassName('highlighted');") { 
+        HTML.img(:src => icon_l)
       } 
-      super(HTML.div { btn_v + btn_h })
+      btn_r = HTML.div(:id => but_r, :class => [ :context_menu_button, hl_r ], 
+                       :onclick => "Aurita.load({ element: 'dispatcher', action: '#{action}=r' }); 
+                                    $('#{but_h}').removeClassName('highlighted'); 
+                                    $('#{but_l}').removeClassName('highlighted'); 
+                                    $('#{but_r}').addClassName('highlighted');") { 
+        HTML.img(:src => icon_r)
+      } 
+      super(HTML.div { btn_h + btn_l + btn_r })
     end
   end
 
