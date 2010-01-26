@@ -30,10 +30,11 @@ module Publish
 
       elements = page.elements.map { |p|
         if p.kind_of?(Wiki::Article) then
-          Aurita::GUI::Text_Button.new(:onclick => link_to(:controller => 'Publish::Page_Element', 
-                                                   :action => :perform_delete, 
-                                                   :page_id => page.page_id, 
-                                                   :content_id => p.content_id)) { 'x' } + 
+          Aurita::GUI::Text_Button.new(:class   => :remove_article_button, 
+                                       :onclick => link_to(:controller => 'Publish::Page_Element', 
+                                                           :action     => :perform_delete, 
+                                                           :page_id    => page.page_id, 
+                                                           :content_id => p.content_id)) { tl(:remove_article) } + 
           render_controller(Wiki::Article_Controller, :show, :article_id => p.article_id)
         end
       }
@@ -67,7 +68,8 @@ module Publish
       page = load_instance()
       return unless page
 
-      backgrounds = Wiki::Media_Asset.all_with(Wiki::Media_Asset.media_folder_id == 220).map { |b|
+      backgrounds = Wiki::Media_Asset.all_with((Wiki::Media_Asset.deleted == 'f') & 
+                                               (Wiki::Media_Asset.media_folder_id == 220)).map { |b|
         if b.media_asset_id == page.bg_media_asset_id then
           borderstyle = 'background: white;'
         else

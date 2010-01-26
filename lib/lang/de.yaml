@@ -11,3 +11,5 @@ add_article : Artikel hinzuf&uuml;gen
 add_layout_partial : Neue Vorlage
 background : Hintergrund
 backgrounds : Hintergrundbilder
+
+remove_article : Artikel entfernen

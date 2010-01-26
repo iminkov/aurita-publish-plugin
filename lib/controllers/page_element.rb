@@ -14,7 +14,7 @@ module Publish
       form = add_form
       form[:action].value = :perform_add_article
 
-      form.add(GUI::Hidden_Field.new(:name => :page_id, :value => param(:page_id)))
+      form.add(Aurita::GUI::Hidden_Field.new(:name => :page_id, :value => param(:page_id)))
       form.add(Wiki::GUI::Article_Selection_Field.new(:name        => :article, 
                                                       :label       => tl(:find_article), 
                                                       :num_results => 100, 
@@ -24,7 +24,7 @@ module Publish
       form = decorate_form(form)
       return form unless param(:element) == 'app_main_content'
 
-      GUI::Page.new(:header => tl(:edit_page)) { 
+      Aurita::GUI::Page.new(:header => tl(:edit_page)) { 
         form
       }
     end
