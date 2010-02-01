@@ -27,6 +27,34 @@ module Publish
 
       @elements
     end
+
+    def hierarchy_path(rec_path=[])
+   #  return [] if special
+
+      if rec_path.length == 0 then
+        e = Hierarchy_Entry.find(1).with(:content_id => content_id).entity
+        rec_path << { :entry => e, 
+                      :page  => self }
+        return hierarchy_path(rec_path)
+      else
+        parent_heid = rec_path[-1][:entry].hierarchy_entry_id_parent 
+        if parent_heid == 0 then
+          top = Hierarchy.get(rec_path[-1][:entry].hierarchy_id)
+          if !top.locked then
+            rec_path << { :entry => top, :page => false }
+          end
+          return rec_path 
+        end
+        e    = Hierarchy_Entry.find(1).with(:hierarchy_entry_id => parent_heid).entity
+        page = false
+        if e.content_id then
+          page = Page.find(1).with(Page.content_id == e.content_id).entity
+        end
+        rec_path << { :entry => e, :page => page }
+        return hierarchy_path(rec_path)
+      end
+    end
+
   end
 
 end

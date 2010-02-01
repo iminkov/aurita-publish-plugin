@@ -26,6 +26,13 @@ module Publish
       page     = load_instance()
       return unless page
 
+      if page.special then
+        message_box = HTML.div(:class => [:message_box, :notice]) { 
+          tl(:page_cannot_be_edited)
+        }
+        return message_box
+      end
+
       exec_js("Aurita.Publish.onload_page(#{page.page_id});")
 
       elements = page.elements.map { |p|
