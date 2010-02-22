@@ -108,7 +108,7 @@ module Publish
       placements_left  = []
       placements_right = []
       placement_ids    = [0]
-      Marginal_Placement.all_with(:page_id => param(:page_id)).sort_by(:position, :desc).each { |mp|
+      Marginal_Placement.all_with(:page_id => param(:page_id)).sort_by(:position, :asc).each { |mp|
         placement_ids << mp.marginal_id
         images = Wiki::Article.get(mp.marginal.article_id).media_assets
         image  = images[0] if images

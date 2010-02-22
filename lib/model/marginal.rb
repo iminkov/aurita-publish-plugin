@@ -11,7 +11,10 @@ module Publish
 
     is_polymorphic :concrete_model
 
-    validates(:header, :maxlength => 30) 
+    def article
+      Wiki::Article.get(article_id)
+    end
+
   end
 
 end

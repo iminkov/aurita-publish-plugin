@@ -12,9 +12,9 @@ module Publish
 
     has_a Marginal, :marginal_id
 
-    validates(:section) { |v|
-      ['left','right','bottom'].include?(v.to_s)
-    }
+#    validates(:section) { |v|
+#      ['left','right','bottom'].include?(v.to_s)
+#    }
 
     def marginal
       Marginal.get(marginal_id)
