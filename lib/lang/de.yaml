@@ -18,3 +18,14 @@ publish_news : Meldungen ver&ouuml;ffentlichen
 
 page_cannot_be_edited : Diese Seite wird automatisch verwaltet
 
+article : Artikel
+header : Titel
+
+add_marginal : Neuer Teaser
+marginal : Teaser
+marginals : Teaser
+edit_marginals : Teaser bearbeiten
+place_marginals : Teaser platzieren
+
+marginal_placements : Teaser platzieren
+

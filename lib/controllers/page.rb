@@ -23,8 +23,10 @@ module Publish
     }
 
     def show
-      page     = load_instance()
+      page = load_instance()
       return unless page
+
+      exec_js("Aurita.Publish.onload_page(#{page.page_id});")
 
       if page.special then
         message_box = HTML.div(:class => [:message_box, :notice]) { 
@@ -32,8 +34,6 @@ module Publish
         }
         return message_box
       end
-
-      exec_js("Aurita.Publish.onload_page(#{page.page_id});")
 
       elements = page.elements.map { |p|
         if p.kind_of?(Wiki::Article) then

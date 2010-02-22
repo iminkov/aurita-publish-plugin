@@ -29,8 +29,6 @@ module Publish
     end
 
     def hierarchy_path(rec_path=[])
-   #  return [] if special
-
       if rec_path.length == 0 then
         e = Hierarchy_Entry.find(1).with(:content_id => content_id).entity
         rec_path << { :entry => e, 
