@@ -1,4 +1,6 @@
 
+require('aurita/plugin_controller')
+
 module Aurita
 module Plugins
 module Publish
