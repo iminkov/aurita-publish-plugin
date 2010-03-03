@@ -77,14 +77,14 @@ module Publish
 
       backgrounds = Wiki::Media_Asset.all_with((Wiki::Media_Asset.deleted == 'f') & 
                                                (Wiki::Media_Asset.media_folder_id == 220)).map { |b|
+        highlight_class = nil
         if b.media_asset_id == page.bg_media_asset_id then
-          borderstyle = 'background: white;'
-        else
-          borderstyle = ''
+          highlight_class = :highlighted
         end
-        HTML.div(:style => "float: left; height: 71px; 
+        HTML.div(:class => highlight_class, 
+                 :style => "float: left;  
                             margin-right: 1px; margin-bottom: 1px; 
-                            padding: 1px; #{borderstyle}") { 
+                            padding: 1px; ") { 
           link_to(:perform_set_background, 
                   :element        => :dispatcher, 
                   :media_asset_id => b.media_asset_id, 
