@@ -25,6 +25,7 @@ module Publish
     def show
       page = load_instance()
       return unless page
+      return unless Aurita.user.may_edit_content?(page) 
 
       exec_js("Aurita.Publish.onload_page(#{page.page_id});")
 

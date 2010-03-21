@@ -1,6 +1,7 @@
 
 require('aurita/model')
 Aurita::Main.import_model :content
+Aurita.import_plugin_model :publish, :page_metadata
 
 module Aurita
 module Plugins
@@ -13,16 +14,20 @@ module Publish
     primary_key :page_id, :page_id_seq
 
     is_a Content, :content_id
+    has_a Page_Metadata, :page_metadata_id
     
-    def elements
+    def elements(params={})
+      amount = params[:amount]
       # We expect rather few page elements, while 
       # there are many concrete classes for Content, 
       # so we use lazy polymorphism. 
 
       @elements ||= Content.select { |c|
-        c.where(c.content_id.in(Page_Element.select(:content_id) { |cid|
+        c.limit(amount) if amount
+        c.join(Page_Element).using(:content_id) { |cid| 
           cid.where(Page_Element.page_id == page_id)
-        }))
+          cid.order_by(Page_Element.page_element_id, :desc)
+        }
       }.to_a.map { |c| c.concrete_instance }
 
       @elements
@@ -51,6 +56,18 @@ module Publish
         rec_path << { :entry => e, :page => page }
         return hierarchy_path(rec_path)
       end
+    end
+
+    def metadata
+      meta = Page_Metadata.find(1).with(:page_id => page_id).entity
+      return meta if meta
+      
+      parts       = elements()
+      description = parts.first.teaser
+      keywords    = parts.map { |p| p.tags }.flatten
+
+      return Mock_Object.new(:description => description, 
+                             :keywords    => keywords)
     end
 
   end
