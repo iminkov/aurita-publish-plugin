@@ -22,7 +22,7 @@ module Publish
 
     def add 
       form = add_form()
-      form.add(Aurita::GUI::Text_Field.new(:name => Marginal.header, :maxlength => 30, :label => tl(:header)))
+      form.add(Aurita::GUI::Text_Field.new(:name => Marginal.header, :maxlength => 25, :label => tl(:header)))
       form.add(Aurita::Plugins::Wiki::GUI::Article_Selection_Field.new(:name  => :article, 
                                                                        :key   => :article_id, 
                                                                        :label => tl(:article), 
@@ -91,10 +91,52 @@ module Publish
       }
     end
 
+    def delete
+      Aurita::GUI::Page.new(:header => tl(:delete_marginal)) { 
+        super()
+      }
+    end
+
+    def perform_delete
+      super()
+      redirect_to(:list)
+    end
+
+    def update
+      instance = load_instance()
+      form     = update_form()
+      form.add(Aurita::GUI::Text_Field.new(:name => Marginal.header, :maxlength => 25, :label => tl(:header)))
+#     form.add(Aurita::Plugins::Wiki::GUI::Article_Selection_Field.new(:name  => :article, 
+#                                                                      :key   => :article_id, 
+#                                                                      :label => tl(:article), 
+#                                                                      :value => instance.article_id, 
+#                                                                      :id    => :marginal_article_id))
+
+      Aurita::GUI::Page.new(:header => tl(:edit_marginal)) { 
+        form
+      }
+    end
+
     def list
-      HTML.ul { 
-        Marginal.all.entities.map { |m|
-          HTML.li { m.header }
+      Aurita::GUI::Page.new(:header => tl(:edit_marginals)) { 
+        HTML.ul { 
+          Marginal.all.entities.map { |m|
+            HTML.li { 
+              HTML.div(:style => 'width: 30px; float: left; margin-top: 2px; ') {
+                  link_to(m, :action => :delete) { 
+                    HTML.img(:src => '/aurita/images/icons/delete_small.png') 
+                  } 
+              } + 
+              HTML.div(:style => 'width: 200px; float: left; ') {
+                link_to(m, :action => :update) { m.header } 
+              } +  
+              HTML.div(:style => 'float: left; ') {
+                ' [ ' + tl(:article) + ': ' + 
+                link_to(m.article, :action => :show) { m.article.title } + ' ] '
+              } + 
+              HTML.div(:style => 'clear: both;') { } 
+            }
+          }
         }
       }
     end
@@ -105,6 +147,8 @@ module Publish
     def placement_editor
       exec_js("Aurita.Publish.init_marginal_placement_editor(#{param(:page_id)});")
       
+      page = Publish::Page.get(param(:page_id))
+
       placements_left  = []
       placements_right = []
       placement_ids    = [0]
@@ -135,7 +179,10 @@ module Publish
         end
       }
       
+      title = page.hierarchy_path[0][:entry].label
+
       Aurita::GUI::Page.new(:header => tl(:marginal_placements)) { 
+        HTML.h2 { "#{tl(:page)}: #{title}" } + 
         HTML.div.marginals { 
           HTML.ul(:id => :place_marginal_selection_list) { marginals } +
           HTML.div(:style => 'clear: both;') { } 

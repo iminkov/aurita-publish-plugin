@@ -21,10 +21,15 @@ page_cannot_be_edited : Diese Seite wird automatisch verwaltet
 article : Artikel
 header : Titel
 
+public--marginal--header : Titel
+public--marginal--article_id : Artikel
+
 add_marginal : Neuer Teaser
 marginal : Teaser
 marginals : Teaser
 edit_marginals : Teaser bearbeiten
+edit_marginal : Teaser bearbeiten
+delete_marginal : Teaser l&ouml;schen
 place_marginals : Teaser platzieren
 
 marginal_placements : Teaser platzieren
