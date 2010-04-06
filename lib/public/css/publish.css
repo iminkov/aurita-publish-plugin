@@ -70,3 +70,7 @@
   color:rgba(255, 255, 255, 0.3);
 }
 
+
+.media_asset_select_variant_list select { 
+  width: 130px; 
+}
