@@ -1,11 +1,13 @@
 
 require('aurita')
+Aurita.import_module :gui, :datetime_helpers
 
 module Aurita
 module Plugins
 module Publish
 
   class Sitemap
+  include Aurita::GUI::Datetime_Helpers
 
     def initialize(pages)
       @pages = pages
@@ -29,7 +31,7 @@ EOS
         s << "
           <url>
             <loc>http://#{Aurita.project.host}/aurita/Publish::Page/#{p.page_id}/show/#{title}</loc>
-            <lastmod>#{p.changed}</lastmod>
+            <lastmod>#{datetime_string(p.changed, "%Y-%m-%d")}</lastmod>
             <changefreq>daily</changefreq>
             <priority>0.8</priority>
           </url>"

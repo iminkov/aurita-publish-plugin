@@ -70,6 +70,27 @@ module Publish
                              :keywords    => keywords)
     end
 
+    def parent_id
+      @parent_id ||= self.class.select_values(:page_id) { |p|
+        p.where(Page.content_id.in { 
+          Hierarchy_Entry.select(:content_id) { |pid|
+            pid.where(Hierarchy_Entry.hierarchy_entry_id == Hierarchy_Entry.select(:hierarchy_entry_id_parent) { |epid|
+              epid.where(Hierarchy_Entry.content_id == content_id)
+            })
+            pid.limit(1)
+          }
+        })
+      }.to_a.flatten.first.to_i
+      @parent_id ||= 0
+      @parent_id
+    end
+
+    def hierarchy_label
+      Hierarchy_Entry.select_values(:label) { |l|
+        l.where(:content_id => content_id)
+      }.to_a
+    end
+
   end
 
 end

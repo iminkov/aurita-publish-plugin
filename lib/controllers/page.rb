@@ -1,5 +1,6 @@
 
 require('aurita/plugin_controller')
+require('aurita-gui/form/select_field')
 Aurita.import_module :gui, :text_button
 Aurita.import_plugin_model :publish, :page
 Aurita.import_plugin_model :publish, :page_element
@@ -21,6 +22,25 @@ module Publish
     guard(:update, :perform_update, :delete, :perform_delete) { |c|
       Aurita.user.may_edit_content?(c.load_instance)
     }
+
+    def text_asset_link_field
+      entries   = Hierarchy.find(1).entity.concrete_entries
+      map       = Hierarchy_Map_Iterator.new(entries)
+      options   = []
+      page_ids  = []
+      map.each_with_level { |page,level|
+        label  = ' '
+        level.times { label << '&nbsp;&nbsp;' }
+        label    << page.hierarchy_label
+        options  << label
+        page_ids << page.page_id.to_s
+      }
+      options.fields = page_ids
+      Select_Field.new(:name     => :page_id, 
+                       :label    => tl(:link_to_page), 
+                       :options  => options, 
+                       :onchange => "Aurita.Publish.link_page(this);")
+    end
 
     def show
       page = load_instance()
