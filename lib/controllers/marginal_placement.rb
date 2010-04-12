@@ -8,13 +8,8 @@ module Publish
   class Marginal_Placement_Controller < Plugin_Controller
   
     def perform_add
-      if param(:section) == 'left' then
-        placements = param(:marginal_placements_left)
-        section    = 'left'
-      elsif param(:section) == 'right' then
-        placements = param(:marginal_placements_right)
-        section    = 'right'
-      end
+      section    = param(:section) 
+      placements = param("marginal_placements_#{section}")
 
       Marginal_Placement.delete { |mp|
         mp.where((mp.page_id == param(:page_id)) & (mp.section == section))

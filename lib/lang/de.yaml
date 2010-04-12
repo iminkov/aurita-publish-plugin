@@ -36,3 +36,12 @@ marginal_placements : Teaser platzieren
 
 link_to_page : Link auf Seite
 
+marginal_placements_header_left : Feature-Artikel links
+marginal_placements_header_right : Feature-Artikel rechts
+marginal_placements_header_bottom : Feature-Artikel unten
+marginal_placements_header_top : Feature-Artikel oben
+banner_placements_header_top : Banner oben
+banner_placements_header_right: Banner rechts
+banner_placements_header_bottom: Banner unten
+banner_placements_header_left: Banner links
+

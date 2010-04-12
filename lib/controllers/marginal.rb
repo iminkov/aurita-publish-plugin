@@ -170,16 +170,17 @@ module Publish
       }
 
       banner_placement_ids = [0]
-      banner_placements    = []
+      banner_placements    = {}
       Advert::Banner_Placement.all_with(:page_id => param(:page_id)).sort_by(:position, :asc).each { |mp|
         banner_placement_ids << mp.banner_id
         banner = mp.banner
         if banner then
           elem = HTML.li(:id => "banner_placement_#{banner.banner_id}") { 
             HTML.div.header { banner.title } + 
-            HTML.div.marginal_image { banner.icon(:preview) }
+            HTML.div.banner_image { banner.icon(:preview) }
           }
-          banner_placements << elem
+          banner_placements[mp.placement.to_sym] ||= []
+          banner_placements[mp.placement.to_sym] << elem 
         end
       }
       
@@ -202,7 +203,7 @@ module Publish
         if banner then
           HTML.li(:id => "banner_placement_#{banner.banner_id}") { 
             HTML.div.header { banner.title } + 
-            HTML.div.marginal_image { banner.icon(:preview) } 
+            HTML.div.banner_image { banner.icon(:preview) } 
           }
         end
       }
@@ -216,13 +217,21 @@ module Publish
           HTML.ul(:id => :place_banner_selection_list) { banners } +
           HTML.div(:style => 'clear: both;') { } 
         } + 
-        HTML.div.marginal_placement_editor { 
+        HTML.div.placement_editor { 
           HTML.div { 
             Aurita::Project_Configuration.marginal_sections.map { |section|
-              HTML.ul(:id => "marginal_placements_#{section}") { placements[section.to_sym] } 
-            } 
+              HTML.div.marginal_placement_section { 
+                HTML.div { HTML.b { tl("marginal_placements_header_#{section}") } } + 
+                HTML.ul(:id => "marginal_placements_#{section}") { placements[section.to_sym] } 
+              } 
+            } + 
+            Aurita::Project_Configuration.banner_sections.map { |section|
+              HTML.div.banner_placement_section { 
+                HTML.div { HTML.b { tl("banner_placements_header_#{section}") } } + 
+                HTML.ul(:id => "banner_placements_#{section}") { banner_placements[section.to_sym] } 
+              }
+            }
           } + 
-          HTML.ul(:id => "banner_placements") { banner_placements } + 
           HTML.div(:style => 'clear: both;') { } 
         }
       } 

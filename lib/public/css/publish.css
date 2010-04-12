@@ -1,5 +1,5 @@
 
-.marginal_placement_editor { 
+.placement_editor { 
   width: 100%; 
 }
 
@@ -23,28 +23,39 @@
   width: 204px; 
   border: 1px outset white; 
   background: #dedede; 
-  height: 35px; 
+  height: 18px; 
   margin-right: 2px; 
   margin-top: 2px; 
   padding: 2px; 
   overflow: hidden; 
 }
-.marginal_placement_editor .marginal_image { 
+.placement_editor .marginal_image { 
   text-align: center; 
   margin-top: 8px; 
 }
-.marginal_placement_editor li .header { 
+.placement_editor li .header { 
   cursor: move; 
 }
-.marginal_placement_editor ul { 
-  float: left; 
+.placement_editor ul { 
   width: 210px; 
   border: 1px dashed #ffffff;
   padding: 5px; 
   margin-left: 0px; 
   margin-right: 16px; 
+  float: left; 
 }
-.marginal_placement_editor li { 
+
+.marginal_placement_section { 
+  float: left; 
+}
+.marginal_placement_section b { 
+  display: block; 
+  padding: 4px; 
+  background: #ffffff; 
+  margin-right: 16px; 
+}
+
+.placement_editor li { 
   float: left; 
   width: 200px; 
   border: 1px outset white; 
