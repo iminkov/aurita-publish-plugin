@@ -4,11 +4,12 @@
 }
 
 #place_marginal_selection_list { 
-  width: 448px; 
+  width: 210px; 
   border: 1px dashed #ffffff;
   padding: 5px; 
   margin-bottom: 15px; 
   margin-left: 0px; 
+  margin-right: 16px; 
   float: left; 
 }
 #place_marginal_selection_list .marginal_image { 
@@ -19,7 +20,7 @@
 }
 #place_marginal_selection_list li { 
   float: left; 
-  width: 138px; 
+  width: 204px; 
   border: 1px outset white; 
   background: #dedede; 
   height: 35px; 

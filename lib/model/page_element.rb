@@ -1,5 +1,7 @@
 
 require('aurita/model')
+Aurita::Main.import_model :content
+Aurita.import_plugin_model :wiki, :media_asset
 
 module Aurita
 module Plugins
@@ -11,7 +13,31 @@ module Publish
     
   end
 
-end
-end
-end
+end # Publish
+
+module Wiki
+
+  class Article < Aurita::Main::Content
+    
+    def teaser_text(length=280)
+      ta = text_assets.first
+      if ta then
+        return ta.text.to_s.gsub(/<(\/)?([^>]+)(\/)?>/,'').squeeze(' ')[0..length].split(' ')[0..-2].join(' ') 
+      end
+      return ''
+    end
+
+  end
+
+  class Media_Asset < Wiki::Asset
+
+    def teaser_text(length=280)
+      description.to_s.squeeze(' ')[0..length].split(' ')[0..-2].join(' ')
+    end
+
+  end
+
+end # Wiki
+end # Plugins
+end # Aurita
 

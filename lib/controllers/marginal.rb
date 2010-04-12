@@ -5,6 +5,8 @@ Aurita.import_plugin_model :publish, :marginal
 Aurita.import_plugin_model :wiki, :article
 Aurita.import_plugin_model :wiki, :media_asset
 Aurita.import_plugin_model :publish, :marginal_placement
+Aurita.import_plugin_model :advert, :banner
+Aurita.import_plugin_model :advert, :banner_placement
 Aurita.import_plugin_module :wiki, 'gui/article_selection_field'
 
 module Aurita
@@ -149,20 +151,35 @@ module Publish
       
       page = Publish::Page.get(param(:page_id))
 
-      placements_left  = []
-      placements_right = []
-      placement_ids    = [0]
+      placements        = {}
+      placement_ids     = [0]
       Marginal_Placement.all_with(:page_id => param(:page_id)).sort_by(:position, :asc).each { |mp|
         placement_ids << mp.marginal_id
-        images = Wiki::Article.get(mp.marginal.article_id).media_assets
-        image  = images[0] if images
-        if image then
-          elem = HTML.li(:id => "placement_#{mp.marginal_id}") { 
-            HTML.div.header { mp.marginal.header } + 
-            HTML.div.marginal_image { image.icon(:preview) } 
-          } 
-          placements_left  << elem if mp.section == 'left'
-          placements_right << elem if mp.section == 'right'
+        if mp.marginal then
+          images = Wiki::Article.get(mp.marginal.article_id).media_assets
+          image  = images[0] if images
+          if image then
+            elem = HTML.li(:id => "placement_#{mp.marginal_id}") { 
+              HTML.div.header { mp.marginal.header } + 
+              HTML.div.marginal_image { image.icon(:preview) } 
+            } 
+            placements[mp.section.to_sym] ||= []
+            placements[mp.section.to_sym] << elem 
+          end
+        end
+      }
+
+      banner_placement_ids = [0]
+      banner_placements    = []
+      Advert::Banner_Placement.all_with(:page_id => param(:page_id)).sort_by(:position, :asc).each { |mp|
+        banner_placement_ids << mp.banner_id
+        banner = mp.banner
+        if banner then
+          elem = HTML.li(:id => "banner_placement_#{banner.banner_id}") { 
+            HTML.div.header { banner.title } + 
+            HTML.div.marginal_image { banner.icon(:preview) }
+          }
+          banner_placements << elem
         end
       }
       
@@ -178,6 +195,17 @@ module Publish
           }
         end
       }
+
+      banners = Advert::Banner.select { |m|
+        m.where(Advert::Banner.banner_id.not_in(banner_placement_ids))
+      }.to_a.map { |banner|
+        if banner then
+          HTML.li(:id => "banner_placement_#{banner.banner_id}") { 
+            HTML.div.header { banner.title } + 
+            HTML.div.marginal_image { banner.icon(:preview) } 
+          }
+        end
+      }
       
       title = page.hierarchy_path[0][:entry].label
 
@@ -185,11 +213,16 @@ module Publish
         HTML.h2 { "#{tl(:page)}: #{title}" } + 
         HTML.div.marginals { 
           HTML.ul(:id => :place_marginal_selection_list) { marginals } +
+          HTML.ul(:id => :place_banner_selection_list) { banners } +
           HTML.div(:style => 'clear: both;') { } 
         } + 
         HTML.div.marginal_placement_editor { 
-          HTML.ul(:id => :marginal_placements_left) { placements_left } + 
-          HTML.ul(:id => :marginal_placements_right) { placements_right } +
+          HTML.div { 
+            Aurita::Project_Configuration.marginal_sections.map { |section|
+              HTML.ul(:id => "marginal_placements_#{section}") { placements[section.to_sym] } 
+            } 
+          } + 
+          HTML.ul(:id => "banner_placements") { banner_placements } + 
           HTML.div(:style => 'clear: both;') { } 
         }
       } 
