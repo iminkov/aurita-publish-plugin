@@ -176,8 +176,9 @@ module Publish
         banner = mp.banner
         if banner then
           elem = HTML.li(:id => "banner_placement_#{banner.banner_id}") { 
-            HTML.div.header { banner.title } + 
-            HTML.div.banner_image { banner.icon(:preview) }
+            HTML.div.header { banner.banner_name } + 
+            HTML.div.informal { banner.format_name } + 
+            HTML.div.banner_image { banner.icon(:thumb) }
           }
           banner_placements[mp.placement.to_sym] ||= []
           banner_placements[mp.placement.to_sym] << elem 
@@ -202,8 +203,9 @@ module Publish
       }.to_a.map { |banner|
         if banner then
           HTML.li(:id => "banner_placement_#{banner.banner_id}") { 
-            HTML.div.header { banner.title } + 
-            HTML.div.banner_image { banner.icon(:preview) } 
+            HTML.div.header { banner.banner_name } + 
+            HTML.div.informal { banner.format_name } + 
+            HTML.div.banner_image { banner.icon(:thumb) } 
           }
         end
       }
