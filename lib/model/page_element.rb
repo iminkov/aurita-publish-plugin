@@ -22,7 +22,7 @@ module Wiki
     def teaser_text(length=280)
       ta = text_assets.first
       if ta then
-        return ta.text.to_s.gsub(/<(\/)?([^>]+)(\/)?>/,'').squeeze(' ')[0..length].split(' ')[0..-2].join(' ') 
+        return ta.text.to_s.gsub(/<(\/)?([^>]+)(\/)?>/,'').gsub('&nbsp;',' ').gsub(/<img([^>]+)>/,'').squeeze(' ')[0..length].split(' ')[0..-2].join(' ') 
       end
       return ''
     end
