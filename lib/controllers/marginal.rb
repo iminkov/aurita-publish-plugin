@@ -7,7 +7,8 @@ Aurita.import_plugin_model :wiki, :media_asset
 Aurita.import_plugin_model :publish, :marginal_placement
 Aurita.import_plugin_model :advert, :banner
 Aurita.import_plugin_model :advert, :banner_placement
-Aurita.import_plugin_module :wiki, 'gui/article_selection_field'
+Aurita.import_plugin_module :wiki, :gui, :article_selection_field
+Aurita.import_plugin_module :wiki, :gui, :media_asset_selection_list_field
 
 module Aurita
 module Plugins
@@ -19,6 +20,7 @@ module Publish
       [
         Marginal.header, 
         Marginal.subtitle, 
+        :media_asset_ids,
         :article
       ]
     end
@@ -29,7 +31,14 @@ module Publish
                                            :required  => true, 
                                            :maxlength => 25, 
                                            :label     => tl(:header)))
-      form.add(Aurita::GUI::Text_Field.new(:name => Marginal.title, :maxlength => 35, :label => tl(:subtitle)))
+      form.add(Aurita::GUI::Text_Field.new(:name      => Marginal.subtitle, 
+                                           :maxlength => 100, 
+                                           :label     => tl(:subtitle)))
+      
+      form.add(Aurita::Plugins::Wiki::GUI::Media_Asset_Selection_List_Field.new(:name     => :media_asset_ids, 
+                                                                                :label    => tl(:images), 
+                                                                                :filetype => :image))
+
       form.add(Aurita::Plugins::Wiki::GUI::Article_Selection_Field.new(:name  => :article, 
                                                                        :key   => :article_id, 
                                                                        :label => tl(:article), 
@@ -54,18 +63,34 @@ module Publish
                                            :value     => instance.header, 
                                            :label     => tl(:header)))
       form.add(Aurita::GUI::Text_Field.new(:name      => Marginal.subtitle, 
-                                           :maxlength => 25, 
+                                           :maxlength => 100, 
                                            :value     => instance.subtitle, 
                                            :label     => tl(:subtitle)))
+      
+      selected_images = {}
+      instance.media_asset_ids.each { |mid|
+        selected_images[mid.to_i] = Aurita::Plugins::Wiki::Media_Asset.get(mid).title
+      }
+      
+      form.add(Aurita::Plugins::Wiki::GUI::Media_Asset_Selection_List_Field.new(:name     => :media_asset_ids, 
+                                                                                :label    => tl(:images), 
+                                                                                :filetype => :image, 
+                                                                                :value    => selected_images))
+      
       form.add(Aurita::Plugins::Wiki::GUI::Article_Selection_Field.new(:name  => :article, 
                                                                        :key   => :article_id, 
                                                                        :label => tl(:article), 
                                                                        :value => article, 
                                                                        :id    => :marginal_article_id))
-
+      
       Aurita::GUI::Page.new(:header => tl(:edit_marginal)) { 
         decorate_form(form)
       }
+    end
+
+    def perform_update
+      super()
+      redirect(:to => :list)
     end
 
     def selection_box
