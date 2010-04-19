@@ -22,7 +22,10 @@ article : Artikel
 header : Titel
 
 public--marginal--header : Titel
+public--marginal--subtitle : Untertitel
 public--marginal--article_id : Artikel
+
+subtitle : Untertitel
 
 add_marginal : Neuer Teaser
 marginal : Teaser

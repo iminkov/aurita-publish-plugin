@@ -18,13 +18,18 @@ module Publish
     def form_groups
       [
         Marginal.header, 
+        Marginal.subtitle, 
         :article
       ]
     end
 
     def add 
       form = add_form()
-      form.add(Aurita::GUI::Text_Field.new(:name => Marginal.header, :maxlength => 25, :label => tl(:header)))
+      form.add(Aurita::GUI::Text_Field.new(:name      => Marginal.header, 
+                                           :required  => true, 
+                                           :maxlength => 25, 
+                                           :label     => tl(:header)))
+      form.add(Aurita::GUI::Text_Field.new(:name => Marginal.title, :maxlength => 35, :label => tl(:subtitle)))
       form.add(Aurita::Plugins::Wiki::GUI::Article_Selection_Field.new(:name  => :article, 
                                                                        :key   => :article_id, 
                                                                        :label => tl(:article), 
@@ -37,6 +42,30 @@ module Publish
     def perform_add
       super()
       redirect_to(:list)
+    end
+
+    def update
+      instance = load_instance()
+      form     = update_form()
+      article  = Wiki::Article.get(instance.article_id)
+      form.add(Aurita::GUI::Text_Field.new(:name      => Marginal.header, 
+                                           :required  => true, 
+                                           :maxlength => 25, 
+                                           :value     => instance.header, 
+                                           :label     => tl(:header)))
+      form.add(Aurita::GUI::Text_Field.new(:name      => Marginal.subtitle, 
+                                           :maxlength => 25, 
+                                           :value     => instance.subtitle, 
+                                           :label     => tl(:subtitle)))
+      form.add(Aurita::Plugins::Wiki::GUI::Article_Selection_Field.new(:name  => :article, 
+                                                                       :key   => :article_id, 
+                                                                       :label => tl(:article), 
+                                                                       :value => article, 
+                                                                       :id    => :marginal_article_id))
+
+      Aurita::GUI::Page.new(:header => tl(:edit_marginal)) { 
+        decorate_form(form)
+      }
     end
 
     def selection_box
@@ -102,21 +131,6 @@ module Publish
     def perform_delete
       super()
       redirect_to(:list)
-    end
-
-    def update
-      instance = load_instance()
-      form     = update_form()
-      form.add(Aurita::GUI::Text_Field.new(:name => Marginal.header, :maxlength => 25, :label => tl(:header)))
-#     form.add(Aurita::Plugins::Wiki::GUI::Article_Selection_Field.new(:name  => :article, 
-#                                                                      :key   => :article_id, 
-#                                                                      :label => tl(:article), 
-#                                                                      :value => instance.article_id, 
-#                                                                      :id    => :marginal_article_id))
-
-      Aurita::GUI::Page.new(:header => tl(:edit_marginal)) { 
-        form
-      }
     end
 
     def list
