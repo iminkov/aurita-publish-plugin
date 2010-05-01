@@ -20,6 +20,7 @@ page_cannot_be_edited : Diese Seite wird automatisch verwaltet
 
 article : Artikel
 header : Titel
+onclick : Javascript-Aufruf
 
 public--marginal--header : Titel
 public--marginal--subtitle : Untertitel

@@ -19,6 +19,14 @@ module Publish
       v.squeeze(',')[1..-2].split(',')
     }
 
+    add_input_filter(:onclick) { |v|
+      v.gsub("'",'"')
+    }
+    add_output_filter(:onclick) { |v|
+      v.gsub('"',"'")
+    }
+    html_escape_values_of :onclick
+
     def images
       if !@images then
         @images = media_asset_ids.map { |mid| Wiki::Media_Asset.get(mid) }

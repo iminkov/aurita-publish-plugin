@@ -21,7 +21,8 @@ module Publish
         Marginal.header, 
         Marginal.subtitle, 
         :media_asset_ids,
-        :article
+        :article, 
+        Marginal.onclick
       ]
     end
 
@@ -34,6 +35,8 @@ module Publish
       form.add(Aurita::GUI::Text_Field.new(:name      => Marginal.subtitle, 
                                            :maxlength => 100, 
                                            :label     => tl(:subtitle)))
+      form.add(Aurita::GUI::Text_Field.new(:name      => Marginal.onclick, 
+                                           :label     => tl(:onclick)))
       
       form.add(Aurita::Plugins::Wiki::GUI::Media_Asset_Selection_List_Field.new(:name     => :media_asset_ids, 
                                                                                 :label    => tl(:images), 
@@ -66,6 +69,9 @@ module Publish
                                            :maxlength => 100, 
                                            :value     => instance.subtitle, 
                                            :label     => tl(:subtitle)))
+      form.add(Aurita::GUI::Text_Field.new(:name      => Marginal.onclick, 
+                                           :value     => instance.onclick, 
+                                           :label     => tl(:onclick)))
       
       selected_images = {}
       instance.media_asset_ids.each { |mid|
@@ -172,8 +178,12 @@ module Publish
                 link_to(m, :action => :update) { m.header } 
               } +  
               HTML.div(:style => 'float: left; ') {
-                ' [ ' + tl(:article) + ': ' + 
-                link_to(m.article, :action => :show) { m.article.title } + ' ] '
+                if m.article then
+                  tl(:article) + ': ' + 
+                  link_to(m.article, :action => :show) { m.article.title } 
+                else
+                  'Javascript: ' + m.onclick.to_s
+                end
               } + 
               HTML.div(:style => 'clear: both;') { } 
             }
