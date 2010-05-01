@@ -161,7 +161,7 @@ module Publish
     def list
       Aurita::GUI::Page.new(:header => tl(:edit_marginals)) { 
         HTML.ul { 
-          Marginal.all.entities.map { |m|
+          Marginal.all.sort_by(:marginal_id, :desc).entities.map { |m|
             HTML.li { 
               HTML.div(:style => 'width: 30px; float: left; margin-top: 2px; ') {
                   link_to(m, :action => :delete) { 
@@ -193,10 +193,11 @@ module Publish
       placements        = {}
       placement_ids     = [0]
       Marginal_Placement.all_with(:page_id => param(:page_id)).sort_by(:position, :asc).each { |mp|
+        marginal = mp.marginal
         placement_ids << mp.marginal_id
-        if mp.marginal then
-          images = Wiki::Article.get(mp.marginal.article_id).media_assets
-          image  = images[0] if images
+        if marginal then
+          images  = marginal.images
+          image   = images[0] if images
           if image then
             elem = HTML.li(:id => "placement_#{mp.marginal_id}") { 
               HTML.div.header { mp.marginal.header } + 
@@ -227,8 +228,8 @@ module Publish
       marginals = Marginal.select { |m|
         m.where(Marginal.marginal_id.not_in(placement_ids))
       }.to_a.map { |m|
-        images = Wiki::Article.get(m.article_id).media_assets
-        image  = images[0] if images
+        images  = m.images
+        image   = images[0] if images
         if image then
           HTML.li(:id => "placement_#{m.marginal_id}") { 
             HTML.div.header { m.header } + 

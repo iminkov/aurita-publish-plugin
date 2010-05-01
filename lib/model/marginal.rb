@@ -15,6 +15,20 @@ module Publish
       Wiki::Article.get(article_id)
     end
 
+    add_output_filter(:media_asset_ids) { |v|
+      v.squeeze(',')[1..-2].split(',')
+    }
+
+    def images
+      if !@images then
+        @images = media_asset_ids.map { |mid| Wiki::Media_Asset.get(mid) }
+        if !media_asset_ids.first then
+          @images = article.media_assets
+        end
+      end
+      return @images
+    end
+
   end
 
 end
