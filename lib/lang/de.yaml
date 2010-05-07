@@ -8,6 +8,13 @@ delete_page : Seite l&ouml;schen
 find_article : Artikel w&auml;hlen
 add_article : Artikel hinzuf&uuml;gen
 
+public--page--allow_comments : Kommentare erlauben
+public--page--title : Titel (optional)
+public--page--meta_keywords : Meta-Keywords
+public--page--meta_description : Meta-Description
+
+edit_page_properties : Einstellungen
+
 add_layout_partial : Neue Vorlage
 background : Hintergrund
 backgrounds : Hintergrundbilder
@@ -49,5 +56,20 @@ banner_placements_header_bottom: Banner unten
 banner_placements_header_left: Banner links
 
 images : Bilder
+
+unvalidated_comments : Nicht freigegebene Kommentare
+page_comments : Kommentare
+add_comment : Neuer Kommentar
+send_comment : Senden
+comment : Kommentar
+comment_author_name : Name
+comment_author_email : eMail
+
+website_updates : Website-Updates
+comment_is_awaiting_validation : 'Danke! Ihr Kommentar wird in K&uuml;rze von einem Administrator freigegeben. '
+
+
+
+
 
 

@@ -86,3 +86,36 @@
 .media_asset_select_variant_list select { 
   width: 130px; 
 }
+
+ul.unvalidated_comment_list { 
+  margin: 0px; 
+  padding: 0px; 
+  list-style-type: none; 
+}
+ul.unvalidated_comment_list li { 
+  clear: both; 
+  list-style-type: none; 
+  padding-top: 4px; 
+}
+.unvalidated_comment_tools { 
+  float: left; 
+  padding-right: 3px; 
+  margin-right: 10px; 
+  padding-bottom: 5px; 
+}
+.unvalidated_comment_tools .icon_button { 
+  margin-right: 2px; 
+}
+.unvalidated_comment_page { 
+  float: left; 
+  margin-right: 10px; 
+  margin-bottom: 5px; 
+  width: 200px; 
+  padding-right: 3px; 
+  overflow: hidden; 
+}
+.unvalidated_comment_text { 
+  width: auto; 
+}
+
+
