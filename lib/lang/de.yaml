@@ -21,12 +21,13 @@ backgrounds : Hintergrundbilder
 
 remove_article : Artikel entfernen
 
-publish_news : Meldungen ver&ouuml;ffentlichen
+publish_news : Meldungen ver&ouml;ffentlichen
 
 page_cannot_be_edited : Diese Seite wird automatisch verwaltet
 
 article : Artikel
 header : Titel
+onclick : Javascript-Aufruf
 
 public--marginal--header : Titel
 public--marginal--subtitle : Untertitel

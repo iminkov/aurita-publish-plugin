@@ -21,7 +21,8 @@ module Publish
         Marginal.header, 
         Marginal.subtitle, 
         :media_asset_ids,
-        :article
+        :article, 
+        Marginal.onclick
       ]
     end
 
@@ -34,6 +35,8 @@ module Publish
       form.add(Aurita::GUI::Text_Field.new(:name      => Marginal.subtitle, 
                                            :maxlength => 100, 
                                            :label     => tl(:subtitle)))
+      form.add(Aurita::GUI::Text_Field.new(:name      => Marginal.onclick, 
+                                           :label     => tl(:onclick)))
       
       form.add(Aurita::Plugins::Wiki::GUI::Media_Asset_Selection_List_Field.new(:name     => :media_asset_ids, 
                                                                                 :label    => tl(:images), 
@@ -66,6 +69,9 @@ module Publish
                                            :maxlength => 100, 
                                            :value     => instance.subtitle, 
                                            :label     => tl(:subtitle)))
+      form.add(Aurita::GUI::Text_Field.new(:name      => Marginal.onclick, 
+                                           :value     => instance.onclick, 
+                                           :label     => tl(:onclick)))
       
       selected_images = {}
       instance.media_asset_ids.each { |mid|
@@ -161,7 +167,7 @@ module Publish
     def list
       Aurita::GUI::Page.new(:header => tl(:edit_marginals)) { 
         HTML.ul { 
-          Marginal.all.entities.map { |m|
+          Marginal.all.sort_by(:marginal_id, :desc).entities.map { |m|
             HTML.li { 
               HTML.div(:style => 'width: 30px; float: left; margin-top: 2px; ') {
                   link_to(m, :action => :delete) { 
@@ -172,8 +178,12 @@ module Publish
                 link_to(m, :action => :update) { m.header } 
               } +  
               HTML.div(:style => 'float: left; ') {
-                ' [ ' + tl(:article) + ': ' + 
-                link_to(m.article, :action => :show) { m.article.title } + ' ] '
+                if m.article then
+                  tl(:article) + ': ' + 
+                  link_to(m.article, :action => :show) { m.article.title } 
+                else
+                  'Javascript: ' + m.onclick.to_s
+                end
               } + 
               HTML.div(:style => 'clear: both;') { } 
             }
@@ -193,10 +203,11 @@ module Publish
       placements        = {}
       placement_ids     = [0]
       Marginal_Placement.all_with(:page_id => param(:page_id)).sort_by(:position, :asc).each { |mp|
+        marginal = mp.marginal
         placement_ids << mp.marginal_id
-        if mp.marginal then
-          images = Wiki::Article.get(mp.marginal.article_id).media_assets
-          image  = images[0] if images
+        if marginal then
+          images  = marginal.images
+          image   = images[0] if images
           if image then
             elem = HTML.li(:id => "placement_#{mp.marginal_id}") { 
               HTML.div.header { mp.marginal.header } + 
@@ -227,8 +238,8 @@ module Publish
       marginals = Marginal.select { |m|
         m.where(Marginal.marginal_id.not_in(placement_ids))
       }.to_a.map { |m|
-        images = Wiki::Article.get(m.article_id).media_assets
-        image  = images[0] if images
+        images  = m.images
+        image   = images[0] if images
         if image then
           HTML.li(:id => "placement_#{m.marginal_id}") { 
             HTML.div.header { m.header } + 
