@@ -5,6 +5,7 @@ Aurita.import_module :gui, :text_button
 Aurita.import_plugin_model :publish, :page
 Aurita.import_plugin_model :publish, :page_element
 Aurita.import_plugin_module :wiki, :gui, :article_selection_field
+Aurita.import_plugin_module :publish, :gui, :page_selection_field
 Aurita.import_plugin_controller :wiki, :article
 Aurita.import_plugin_controller :wiki, :media_asset
 
@@ -48,6 +49,7 @@ module Publish
       return unless Aurita.user.may_edit_content?(page) 
 
       exec_js("Aurita.Publish.onload_page(#{page.page_id});")
+      exec_js("Aurita.Advert.onload_page(#{page.page_id});") # TODO: Move this to Advert plugin
 
       if page.special then
         message_box = HTML.div(:class => [:message_box, :notice]) { 
