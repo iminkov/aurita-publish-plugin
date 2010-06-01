@@ -10,6 +10,7 @@ module Publish
 
     def show
       use_decorator :none
+
       pages = Publish::Page.find(:all).entities
       puts Sitemap.new(pages).string
     end

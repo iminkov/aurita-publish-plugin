@@ -9,12 +9,16 @@ module Publish
 
   include Aurita::Main
 
-  class Page < Content
+  class Page < Aurita::Main::Content
     table :page, :public
     primary_key :page_id, :page_id_seq
 
     is_a Content, :content_id
     has_a Page_Metadata, :page_metadata_id
+
+    def allows_comments?
+      allow_comments
+    end
     
     def elements(params={})
       amount = params[:amount]
@@ -31,6 +35,14 @@ module Publish
       }.to_a.map { |c| c.concrete_instance }
 
       @elements
+    end
+
+    def hierarchy_entry
+      Hierarchy_Entry.find(1).with(:content_id => content_id).entity
+    end
+
+    def title
+      hierarchy_entry.label
     end
 
     def hierarchy_path(rec_path=[])

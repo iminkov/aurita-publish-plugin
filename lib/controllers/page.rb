@@ -16,6 +16,17 @@ module Publish
   class Page_Controller < Plugin_Controller
     include Aurita::GUI
 
+    def form_groups
+      [
+       Page.title,
+       Content.tags, 
+       Category.category_id, 
+       Page.meta_keywords, 
+       Page.meta_description, 
+       Page.allow_comments
+      ]
+    end
+
     guard(:add, :perform_add) { |c|
       Aurita.user.is_registered? 
     }
@@ -44,6 +55,7 @@ module Publish
     end
 
     def show
+      
       page = load_instance()
       return unless page
       return unless Aurita.user.may_edit_content?(page) 
@@ -69,14 +81,23 @@ module Publish
         end
       }
 
+      footer = plugin_get(Hook.publish.page.show.footer, :content => page)
+      elements += footer
+
       if Aurita.user.may_edit_content?(page) then
         Aurita::GUI::Page.new { 
           HTML.div.button_bar { 
             Aurita::GUI::Text_Button.new(:onclick => link_to(:controller => 'Publish::Page_Element', 
-                                                     :action     => :add_article, 
-                                                     :page_id    => page.page_id, 
-                                                     :element    => :form_section)) { 
+                                                             :action     => :add_article, 
+                                                             :page_id    => page.page_id, 
+                                                             :element    => :form_section)) { 
               tl(:add_article) 
+            } + 
+            Aurita::GUI::Text_Button.new(:onclick => link_to(:controller => 'Publish::Page', 
+                                                             :action     => :update, 
+                                                             :page_id    => page.page_id), 
+                                         :icon => 'edit_button.gif') { 
+              tl(:edit_page_properties) 
             } 
           } +
           HTML.div(:id => :form_section) { } + 
@@ -129,9 +150,34 @@ module Publish
     end
 
     def add
+      super()
     end
 
     def update
+      page     = load_instance()
+      form     = update_form()
+      category = Category_Selection_List_Field.new()
+      category.value = page.category_ids
+      form.add(category)
+
+      form[Content.tags] = Tag_Autocomplete_Field.new(:name => Content.tags.to_s, :label => tl(:tags), :value => page.tags)
+      form[Content.tags].required!
+      exec_js('Aurita.Main.init_autocomplete_tags();')
+
+      if Aurita.user.is_admin? or page.user_group_id == Aurita.user.user_group_id then 
+        form.fields << Content.locked.to_s
+        is_locked   = Boolean_Radio_Field.new(:name => Content.locked, 
+                                              :label => tl('public--content--locked'), 
+                                              :value => page.locked)
+        form.add(is_locked)
+      end
+
+      render_form(form)
+    end
+
+    def perform_update
+      super()
+      redirect(:to => :show, :page_id => param(:page_id))
     end
 
     def hierarchy_entry_type
