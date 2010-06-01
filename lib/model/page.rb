@@ -9,7 +9,7 @@ module Publish
 
   include Aurita::Main
 
-  class Page < Content
+  class Page < Aurita::Main::Content
     table :page, :public
     primary_key :page_id, :page_id_seq
 

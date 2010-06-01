@@ -1,13 +1,13 @@
 
 require('aurita/plugin_controller')
 require('aurita-gui/form')
-Aurita.import_plugin_model :publish, :page_comment
+Aurita.import_plugin_model :publish, :public_comment
 
 module Aurita
 module Plugins
 module Publish
 
-  class Page_Comment_Controller < Aurita::Plugin_Controller
+  class Public_Comment_Controller < Aurita::Plugin_Controller
     include Aurita::GUI
 
     def add
@@ -20,63 +20,84 @@ module Publish
 
     def list(params={})
     # {{{
-      page = params[:instance]
+      content = params[:instance]
+      cid     = content.content_id
 
       capt1 = rand(20)
       capt2 = rand(20)
 
-      form = Form.new(:name     => :add_comment_form, 
-                      :id       => :add_comment_form, 
+      form = Form.new(:name     => "content_#{cid}_add_comment_form", 
+                      :id       => "content_#{cid}_add_comment_form", 
                       :onsubmit => "Aurita.submit_form(this);") 
       form.add(Hidden_Field.new(:name  => :controller,
-                                :value => 'Publish::Page_Comment'))
+                                :value => 'Publish::Public_Comment'))
       form.add(Hidden_Field.new(:name  => :action, 
                                 :value => :perform_add))
-      form.add(Hidden_Field.new(:name  => :page_id, 
-                                :value => page.page_id))
+      form.add(Hidden_Field.new(:name  => :content_id, 
+                                :value => content.content_id))
       form.add(Hidden_Field.new(:name  => :capt1, 
                                 :value => capt1))
       form.add(Hidden_Field.new(:name  => :capt2, 
                                 :value => capt2))
       
       form.add(Text_Field.new(:name  => :author_name, 
+                              :id    => "content_comment_#{cid}_author_name", 
                               :label => tl(:comment_author_name)))
       form.add(Text_Field.new(:name  => :author_email, 
+                              :id    => "content_comment_#{cid}_author_email", 
                               :label => tl(:comment_author_email)))
+      form.add(Text_Field.new(:name  => :author_website, 
+                              :id    => "content_comment_#{cid}_author_website", 
+                              :label => tl(:comment_author_website)))
       form.add(Textarea_Field.new(:name => :comment, 
                                   :label => tl(:comment)))
-      form.add(Text_Field.new(:name  => :capt, 
-                              :id    => :capt, 
-                              :label => " #{capt1} + #{capt2} = ?"))
+      form.add(Text_Field.new(:name      => :capt, 
+                              :id        => "content_#{cid}_capt", 
+                              :maxlength => 2, 
+                              :label     => " #{capt1} + #{capt2} = ?"))
       form[:capt].required!
 
       form[:author_email].required! 
 
       submit_button = HTML.div.form_buttons { 
-        HTML.button(:onclick => "Aurita.submit_form('add_comment_form');") { 
+        HTML.button(:onclick => "Aurita.submit_form('content_#{cid}_add_comment_form');") { 
           tl(:send_comment)
         }
       }
 
-      HTML.div.page_comments { 
-        HTML.h3.header { tl(:page_comments) } +
-        HTML.div(:id => :add_comment_form_container) { 
-          HTML.div { HTML.b { tl(:add_comment) } } + 
-          form + submit_button 
+      num_comments = Public_Comment.select_value('count(public_comment_id)') { |n|
+        n.where(:content_id => cid, :validated => 't')
+      }.to_a.flatten.first.to_i
+
+
+      container_id = "content_#{cid}_add_comment_form_container"
+
+      HTML.div.content_comments { 
+        HTML.h3.header {
+          tl(:content_comments) + " (#{num_comments})" 
         } +
-        HTML.div.page_comment_list(:id => :page_comments) {
-          comment_list(params)
-        }
+        HTML.div {
+          HTML.a.button(:onclick => "Element.toggle('#{container_id}');") { 
+            HTML.b { tl(:add_comment) } 
+          } + 
+          HTML.div(:id => container_id, 
+                   :style => 'display: none;') {
+            form + submit_button 
+          } + 
+          HTML.div.content_comment_list(:id => "content_#{cid}_content_comments") {
+            comment_list(params)
+          } 
+        } 
       }
     end # }}}
 
     def comment_list(params={})
     # {{{
-      page   = params[:page]
-      page ||= Page.get(param(:page_id))
-      HTML.ul.page_comment_list {
-        page.validated_comments.map { |c|
-          HTML.li.page_comment { 
+      content   = params[:instance]
+      content ||= Content.get(param(:content_id))
+      HTML.ul.content_comment_list {
+        content.validated_comments.map { |c|
+          HTML.li.content_comment { 
             HTML.div.author_name { c.author_name } + 
             HTML.div.date { datetime(c.timestamp_created) } + 
             HTML.div.comment { c.comment }
@@ -87,26 +108,27 @@ module Publish
 
     def perform_add
     # {{{
-      exec_js("$('capt').removeClassName('invalid');")
-      exec_js("$('author_email').removeClassName('invalid');")
+      cid = param(:content_id)
+      exec_js("$('content_#{cid}_capt').removeClassName('invalid');")
+      exec_js("$('content_comment_#{cid}_author_email').removeClassName('invalid');")
 
       failed = false
       capt = param(:capt1).to_i + param(:capt2).to_i
       if(param(:capt).to_s.squeeze(' ').to_i != capt) then
-        exec_js("$('capt').addClassName('invalid');")
+        exec_js("$('content_#{cid}_capt').addClassName('invalid');")
         failed = true
       end
       if(!param(:author_email).to_s.include?('@')) then
-        exec_js("$('author_email').addClassName('invalid');")
+        exec_js("$('content_comment_#{cid}_author_email').addClassName('invalid');")
         failed = true
       end
       
       if !failed then
         instance = super()
-        redirect(:element         => :add_comment_form_container, 
-                 :to              => :after_add, 
-                 :page_id         => param(:page_id), 
-                 :page_comment_id => instance.page_comment_id)
+        redirect(:element           => "content_#{cid}_add_comment_form_container", 
+                 :to                => :after_add, 
+                 :content_id        => param(:content_id), 
+                 :public_comment_id => instance.public_comment_id)
       end
     end # }}}
 
@@ -144,7 +166,7 @@ module Publish
 
     def unvalidated_comments_box_body
     # {{{
-      comments = Page_Comment.select { |p|
+      comments = Public_Comment.select { |p|
         p.where(:validated => false)
         p.order_by(:timestamp_created, :desc)
       }.to_a
@@ -153,15 +175,16 @@ module Publish
 
       HTML.ul.unvalidated_comment_list { 
         comments.map { |c|
-          call_delete   = link_to(:controller => 'Publish::Page_Comment', 
+          call_delete   = link_to(:controller => 'Publish::Public_Comment', 
                                   :action     => :perform_delete, 
                                   :element    => :dispatcher, 
-                                  :id         => c.page_comment_id)
-          call_validate = link_to(:controller => 'Publish::Page_Comment', 
+                                  :id         => c.public_comment_id)
+          call_validate = link_to(:controller => 'Publish::Public_Comment', 
                                   :action     => :perform_validate, 
                                   :element    => :dispatcher, 
-                                  :id         => c.page_comment_id)
-          page = c.page
+                                  :id         => c.public_comment_id)
+
+          content = c.content.concrete_instance
           HTML.li { 
             HTML.div.unvalidated_comment_tools { 
               Text_Button.new(:icon    => 'delete.gif', 
@@ -170,7 +193,7 @@ module Publish
                               :onclick => call_validate) 
             } + 
             HTML.div.unvalidated_comment_page { 
-              tl(:page) + ': ' + link_to(page) { page.title }
+              tl(:content) + ': ' + link_to(content) { content.title }
             } +
             HTML.div.unvalidated_comment_text { 
               "#{c.author_email}: #{c.comment}"
@@ -187,7 +210,7 @@ module Publish
     end
 
     def perform_validate
-      c = Page_Comment.get(id())
+      c = Public_Comment.get(id())
       return unless c
       c[:validated] = true
       c.commit

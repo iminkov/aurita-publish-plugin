@@ -59,12 +59,13 @@ banner_placements_header_left: Banner links
 images : Bilder
 
 unvalidated_comments : Nicht freigegebene Kommentare
-page_comments : Kommentare
+content_comments : Kommentare
 add_comment : Neuer Kommentar
 send_comment : Senden
 comment : Kommentar
-comment_author_name : Name
-comment_author_email : eMail
+comment_author_name : Name*
+comment_author_email : eMail* (nicht sichtbar)
+comment_author_website : Eigene Website
 
 website_updates : Website-Updates
 comment_is_awaiting_validation : 'Danke! Ihr Kommentar wird in K&uuml;rze von einem Administrator freigegeben. '
