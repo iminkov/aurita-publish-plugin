@@ -22,6 +22,7 @@ module Publish
         Marginal.subtitle, 
         :media_asset_ids,
         :article, 
+        :page_id, 
         Marginal.onclick
       ]
     end
@@ -46,6 +47,9 @@ module Publish
                                                                        :key   => :article_id, 
                                                                        :label => tl(:article), 
                                                                        :id    => :marginal_article_id))
+      form.add(GUI::Page_Select_Field.new(:name => :page_id))
+                                     
+
       element = decorate_form(form) 
       element = Aurita::GUI::Page.new(:header => tl(:add_marginal)) { element } if param(:element) == 'app_main_content'
       element
@@ -88,6 +92,7 @@ module Publish
                                                                        :label => tl(:article), 
                                                                        :value => article, 
                                                                        :id    => :marginal_article_id))
+      form.add(GUI::Page_Select_Field.new(:name => :page_id))
       
       Aurita::GUI::Page.new(:header => tl(:edit_marginal)) { 
         decorate_form(form)
@@ -198,7 +203,8 @@ module Publish
     def placement_editor
       exec_js("Aurita.Publish.init_marginal_placement_editor(#{param(:page_id)});")
       
-      page = Publish::Page.get(param(:page_id))
+      page  = Publish::Page.get(param(:page_id))
+      title = page.hierarchy_path[0][:entry].label
 
       placements        = {}
       placement_ids     = [0]
@@ -219,22 +225,6 @@ module Publish
         end
       }
 
-      banner_placement_ids = [0]
-      banner_placements    = {}
-      Advert::Banner_Placement.all_with(:page_id => param(:page_id)).sort_by(:position, :asc).each { |mp|
-        banner_placement_ids << mp.banner_id
-        banner = mp.banner
-        if banner then
-          elem = HTML.li(:id => "banner_placement_#{banner.banner_id}") { 
-            HTML.div.header { banner.banner_name } + 
-            HTML.div.informal { banner.format_name } + 
-            HTML.div.banner_image { banner.icon(:thumb) }
-          }
-          banner_placements[mp.placement.to_sym] ||= []
-          banner_placements[mp.placement.to_sym] << elem 
-        end
-      }
-      
       marginals = Marginal.select { |m|
         m.where(Marginal.marginal_id.not_in(placement_ids))
       }.to_a.map { |m|
@@ -248,25 +238,10 @@ module Publish
         end
       }
 
-      banners = Advert::Banner.select { |m|
-        m.where(Advert::Banner.banner_id.not_in(banner_placement_ids))
-      }.to_a.map { |banner|
-        if banner then
-          HTML.li(:id => "banner_placement_#{banner.banner_id}") { 
-            HTML.div.header { banner.banner_name } + 
-            HTML.div.informal { banner.format_name } + 
-            HTML.div.banner_image { banner.icon(:thumb) } 
-          }
-        end
-      }
-      
-      title = page.hierarchy_path[0][:entry].label
-
       Aurita::GUI::Page.new(:header => tl(:marginal_placements)) { 
         HTML.h2 { "#{tl(:page)}: #{title}" } + 
-        HTML.div.marginals { 
+        HTML.div.marginal_selection_list { 
           HTML.ul(:id => :place_marginal_selection_list) { marginals } +
-          HTML.ul(:id => :place_banner_selection_list) { banners } +
           HTML.div(:style => 'clear: both;') { } 
         } + 
         HTML.div.placement_editor { 
@@ -276,13 +251,7 @@ module Publish
                 HTML.div { HTML.b { tl("marginal_placements_header_#{section}") } } + 
                 HTML.ul(:id => "marginal_placements_#{section}") { placements[section.to_sym] } 
               } 
-            } + 
-            Aurita::Project_Configuration.banner_sections.map { |section|
-              HTML.div.banner_placement_section { 
-                HTML.div { HTML.b { tl("banner_placements_header_#{section}") } } + 
-                HTML.ul(:id => "banner_placements_#{section}") { banner_placements[section.to_sym] } 
-              }
-            }
+            } 
           } + 
           HTML.div(:style => 'clear: both;') { } 
         }

@@ -31,6 +31,10 @@ module Wiki
 
   class Media_Asset < Wiki::Asset
 
+    add_output_filter(:description) { |v|
+      v.to_s.gsub('"','&quot;')
+    }
+
     def teaser_text(length=280)
       description.to_s.squeeze(' ')[0..length].split(' ')[0..-2].join(' ')
     end

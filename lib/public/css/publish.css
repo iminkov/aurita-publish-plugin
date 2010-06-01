@@ -16,7 +16,8 @@
   display: none; 
 }
 #place_marginal_selection_list li .header { 
-  cursor: s-resize; 
+  cursor: move; 
+  background: url('/aurita/images/icons/move.gif') no-repeat 100% 2px;
 }
 #place_marginal_selection_list li { 
   float: left; 
@@ -35,6 +36,7 @@
 }
 .placement_editor li .header { 
   cursor: move; 
+  background: url('/aurita/images/icons/move.gif') no-repeat 100% 2px;
 }
 .placement_editor ul { 
   width: 210px; 
@@ -64,6 +66,10 @@
   margin-right: 2px; 
   margin-top: 2px; 
   padding: 4px; 
+}
+
+.marginal_selection_list { 
+  float: left; 
 }
 
 
