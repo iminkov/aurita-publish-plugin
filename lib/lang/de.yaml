@@ -28,15 +28,15 @@ public--marginal--article_id : Artikel
 
 subtitle : Untertitel
 
-add_marginal : Neuer Teaser
-marginal : Teaser
-marginals : Teaser
-edit_marginals : Teaser bearbeiten
-edit_marginal : Teaser bearbeiten
-delete_marginal : Teaser l&ouml;schen
-place_marginals : Teaser platzieren
+add_marginal : Neuer Anrei&szlig;er
+marginal : Anrei&szlig;er
+marginals : Anrei&szlig;er
+edit_marginals : Anrei&szlig;er bearbeiten
+edit_marginal : Anrei&szlig;er bearbeiten
+delete_marginal : Anrei&szlig;er l&ouml;schen
+place_marginals : Anrei&szlig;er platzieren
 
-marginal_placements : Teaser platzieren
+marginal_placements : Anrei&szlig;er platzieren
 
 link_to_page : Link auf Seite
 
@@ -44,10 +44,6 @@ marginal_placements_header_left : Feature-Artikel links
 marginal_placements_header_right : Feature-Artikel rechts
 marginal_placements_header_bottom : Feature-Artikel unten
 marginal_placements_header_top : Feature-Artikel oben
-banner_placements_header_top : Banner oben
-banner_placements_header_right: Banner rechts
-banner_placements_header_bottom: Banner unten
-banner_placements_header_left: Banner links
 
 images : Bilder
 
