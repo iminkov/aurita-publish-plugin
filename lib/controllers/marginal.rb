@@ -7,8 +7,9 @@ Aurita.import_plugin_model :wiki, :media_asset
 Aurita.import_plugin_model :publish, :marginal_placement
 Aurita.import_plugin_model :advert, :banner
 Aurita.import_plugin_model :advert, :banner_placement
-Aurita.import_plugin_module :wiki, :gui, :article_selection_field
+Aurita.import_plugin_module :wiki, :gui, :article_select_field
 Aurita.import_plugin_module :wiki, :gui, :media_asset_selection_list_field
+Aurita.import_plugin_module :publish, :gui, :page_select_field
 
 module Aurita
 module Plugins
@@ -43,11 +44,11 @@ module Publish
                                                                                 :label    => tl(:images), 
                                                                                 :filetype => :image))
 
-      form.add(Aurita::Plugins::Wiki::GUI::Article_Selection_Field.new(:name  => :article, 
-                                                                       :key   => :article_id, 
-                                                                       :label => tl(:article), 
-                                                                       :id    => :marginal_article_id))
-      form.add(GUI::Page_Select_Field.new(:name => :page_id))
+      form.add(Aurita::Plugins::Wiki::GUI::Article_Select_Field.new(:name  => :article, 
+                                                                    :key   => :article_id, 
+                                                                    :label => tl(:link_to_article), 
+                                                                    :id    => :marginal_article_id))
+      form.add(GUI::Page_Select_Field.new(:name => :page_id, :label => tl(:link_to_page)))
                                      
 
       element = decorate_form(form) 
@@ -87,12 +88,14 @@ module Publish
                                                                                 :filetype => :image, 
                                                                                 :value    => selected_images))
       
-      form.add(Aurita::Plugins::Wiki::GUI::Article_Selection_Field.new(:name  => :article, 
-                                                                       :key   => :article_id, 
-                                                                       :label => tl(:article), 
-                                                                       :value => article, 
-                                                                       :id    => :marginal_article_id))
-      form.add(GUI::Page_Select_Field.new(:name => :page_id))
+      form.add(Aurita::Plugins::Wiki::GUI::Article_Select_Field.new(:name  => :article, 
+                                                                    :key   => :article_id, 
+                                                                    :label => tl(:link_to_article), 
+                                                                    :value => article, 
+                                                                    :id    => :marginal_article_id))
+      form.add(GUI::Page_Select_Field.new(:name  => :page_id, 
+                                          :label => tl(:link_to_page), 
+                                          :value => instance.page_id))
       
       Aurita::GUI::Page.new(:header => tl(:edit_marginal)) { 
         decorate_form(form)
@@ -186,6 +189,9 @@ module Publish
                 if m.article then
                   tl(:article) + ': ' + 
                   link_to(m.article, :action => :show) { m.article.title } 
+                elsif m.page then
+                  tl(:page) + ': ' + 
+                  link_to(m.page, :action => :show) { m.page.title } 
                 else
                   'Javascript: ' + m.onclick.to_s
                 end

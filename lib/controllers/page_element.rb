@@ -2,7 +2,7 @@
 require('aurita/plugin_controller')
 Aurita.import_plugin_model :publish, :page
 Aurita.import_plugin_model :publish, :page_element
-Aurita.import_plugin_module :wiki, :gui, :article_selection_field
+Aurita.import_plugin_module :wiki, :gui, :article_select_field
 
 module Aurita
 module Plugins
@@ -15,10 +15,10 @@ module Publish
       form[:action].value = :perform_add_article
 
       form.add(Aurita::GUI::Hidden_Field.new(:name => :page_id, :value => param(:page_id)))
-      form.add(Wiki::GUI::Article_Selection_Field.new(:name        => :article, 
-                                                      :label       => tl(:find_article), 
-                                                      :num_results => 100, 
-                                                      :id          => :article_id_selection))
+      form.add(Wiki::GUI::Article_Select_Field.new(:name        => :article, 
+                                                   :label       => tl(:find_article), 
+                                                   :num_results => 100, 
+                                                   :id          => :article_id_selection))
       form.fields = [ :article, :page_id ]
 
       form = decorate_form(form)
